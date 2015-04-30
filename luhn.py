@@ -6,7 +6,7 @@ class Luhn(object):
   def addends(self):
     s = 0
     for i, d in enumerate(Luhn.digits(self.num), 1):
-      x = (2*d if 2*d < 10 else 2*d-9) if i%2 == 0 else d
+      x = (2*d if d < 5 else 2*d-9) if i%2 == 0 else d
       s += x*10**(i-1)
     return Luhn.digits(s)
 
@@ -19,12 +19,8 @@ class Luhn(object):
   @staticmethod
   def create(n):
     ''' adds a check digit such that n becomes a valid Luhn number '''
-    nn = n*10 # make 'space' for the check digit
-    # we brute-force it
-    for i in range(10):
-      candidate = nn + i
-      if Luhn(candidate).is_valid():
-        return candidate
+    last_digit = Luhn(n*10).checksum()
+    return n*10 + (10 - last_digit) if last_digit else n*10
 
   @staticmethod
   def digits(n):
